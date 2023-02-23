@@ -57,7 +57,7 @@ def make_file(dbf_file, fields, basedir, target):
     operates = create_file_operate(dbf_file, fields)
     error = []
     for o in operates:
-        o.find(basedir)
+        o.find(basedir, True)
         if o.has_message:
             error.append(o.message)
         else:

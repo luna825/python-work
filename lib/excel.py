@@ -1,4 +1,5 @@
 import xlwt
+import xlrd
 
 
 class EasyExcel(object):
@@ -40,6 +41,35 @@ class EasyExcel(object):
 
     def save(self, name):
         self.excel.save(name + '.xls')
+
+
+class ExcelReader(object):
+
+    def __init__(self, path):
+        self.table = xlrd.open_workbook(path).sheets()[0]
+
+    # 行数
+    def get_row_number(self):
+        return self.table.nrows
+
+    def get_header(self, header_row):
+        return self.table.row_values(rowx=header_row, start_colx=0, end_colx=None)
+
+    def read(self, header: tuple, header_row=0):
+        result = []
+        o_header = self.get_header(header_row)
+        lines = self.get_row_number()
+        for line in range(header_row + 1, lines):
+            data = {}
+            for field in header:
+                col = o_header.index(field)
+                if col > -1:
+                    cell = self.table.cell_value(line, col)
+                    data[field] = cell
+            if len(data.keys()) > 0:
+                result.append(data)
+
+        return result
 
 
 def write_to_excel(data, header, file_name):
